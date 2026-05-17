@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#D85A30">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="IRONOR">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>IRONOR — Partes de Trabajo</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#1a1a18;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+#app{max-width:480px;margin:0 auto;background:#f5f4f0;min-height:100vh;padding-bottom:calc(20px + env(safe-area-inset-bottom))}
+.header{background:#2C2C2A;padding:14px 16px 12px;display:flex;align-items:center;justify-content:space-between;padding-top:calc(14px + env(safe-area-inset-top))}
+.logo-txt{color:white;font-size:20px;font-weight:700;letter-spacing:1.5px}
+.logo-txt span{color:#4A9EE8}
+.parte-badge{font-size:11px;font-weight:600;color:#aaa;background:#3a3a38;border-radius:6px;padding:4px 10px;letter-spacing:0.3px}
+.subheader{background:#D85A30;padding:7px 16px;font-size:11px;color:white;letter-spacing:0.8px;font-weight:600}
+.geo-bar{display:flex;align-items:center;gap:8px;padding:8px 14px;background:#fff;border-bottom:1px solid #e8e7e2;font-size:12px;color:#666}
+.geo-ok{color:#3B6D11}.geo-err{color:#A32D2D}.geo-wait{color:#854F0B}
+.body{padding:14px}
+.section{background:#fff;border-radius:12px;padding:14px;margin-bottom:12px;border:1px solid #e8e7e2}
+.slabel{font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.slabel i{font-size:14px;color:#D85A30}
+.field{margin-bottom:10px}
+.field:last-child{margin-bottom:0}
+.field label{font-size:12px;color:#666;display:block;margin-bottom:4px;font-weight:500}
+.field input,.field textarea,.field select{width:100%;border:1px solid #ddd;border-radius:8px;padding:10px 12px;font-size:14px;background:#fff;color:#222;font-family:inherit;-webkit-appearance:none}
+.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:#D85A30}
+.field input.input-err{border-color:#E24B4A;background:#fff8f8}
+.field input.input-warn{border-color:#EF9F27;background:#fffbf5}
+.field input.input-ok{border-color:#97C459;background:#f9fdf5}
+.field textarea{resize:vertical;min-height:72px;line-height:1.5}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.orden-info{background:#faf9f6;border:1px solid #e8e7e2;border-radius:8px;padding:8px 12px;font-size:12px;color:#666;margin-top:6px;display:none;line-height:1.6}
+.orden-info strong{color:#222;display:block;font-size:13px}
+.time-btn{display:flex;align-items:center;gap:9px;font-size:13px;color:#666;background:#faf9f6;border:1px solid #ddd;border-radius:8px;padding:10px 12px;cursor:pointer;width:100%;text-align:left}
+.time-btn.done{border-color:#D85A30;background:#fff8f5}
+.time-btn i{font-size:17px;color:#D85A30;flex-shrink:0}
+.time-val{font-weight:600;color:#222;font-size:14px}
+.alert-box{border-radius:8px;padding:9px 12px;font-size:12px;margin-top:8px;display:none;align-items:flex-start;gap:8px;line-height:1.5}
+.a-warn{background:#FAEEDA;color:#633806;border:1px solid #EF9F27}
+.a-err{background:#FCEBEB;color:#791F1F;border:1px solid #E24B4A}
+.a-ok{background:#EAF3DE;color:#27500A;border:1px solid #97C459}
+.a-info{background:#E6F1FB;color:#0C447C;border:1px solid #85B7EB}
+.alert-box i{font-size:15px;flex-shrink:0;margin-top:1px}
+.horas-chip{display:none;align-items:center;gap:6px;background:#EAF3DE;color:#27500A;border-radius:20px;padding:5px 12px;font-size:12px;font-weight:600;margin-top:8px;width:fit-content}
+.fecha-info{font-size:11px;margin-top:5px;color:#666;display:none;padding:5px 10px;border-radius:6px;background:#f5f4f0}
+.photo-drop{border:1.5px dashed #ccc;border-radius:10px;padding:16px 10px;text-align:center;background:#faf9f6;cursor:pointer}
+.photo-drop i{font-size:26px;color:#D85A30;display:block;margin-bottom:6px}
+.photo-drop p{font-size:12px;color:#888}
+#photo-input{display:none}
+#photo-preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.thumb{width:70px;height:70px;border-radius:8px;object-fit:cover;border:1px solid #ddd}
+.btn-group{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:4px 14px 20px}
+.btn{border:none;border-radius:10px;padding:14px 8px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit}
+.btn:active{opacity:0.85;transform:scale(0.98)}
+.btn-wa{background:#25D366;color:white}
+.btn-mail{background:#D85A30;color:white}
+.btn i{font-size:18px}
+.loading-row{display:flex;align-items:center;gap:10px;padding:10px 0;font-size:13px;color:#888}
+.spinner{width:16px;height:16px;border:2px solid #eee;border-top-color:#D85A30;border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.install-banner{display:none;align-items:center;gap:10px;background:#2C2C2A;color:white;padding:10px 14px;font-size:12px;cursor:pointer}
+.install-banner button{margin-left:auto;background:#D85A30;color:white;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap}
+.map-link{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#185FA5;margin-top:5px;text-decoration:none;font-weight:500}
+.nombre-guardado{font-size:11px;color:#D85A30;margin-top:3px;display:none}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div class="install-banner" id="install-banner">
+    <i class="ti ti-download" aria-hidden="true"></i>
+    <span>Instala la app en tu móvil para acceso rápido</span>
+    <button onclick="instalarPWA()">Instalar</button>
+  </div>
+
+  <div class="header">
+    <div class="logo-txt">/<span>ro</span>nor</div>
+    <span class="parte-badge" id="parte-num">PT-0001</span>
+  </div>
+  <div class="subheader">PARTES DE TRABAJO</div>
+
+  <div class="geo-bar">
+    <i class="ti ti-map-pin geo-wait" id="geo-icon" aria-hidden="true"></i>
+    <span id="geo-txt">Obteniendo ubicación GPS...</span>
+  </div>
+
+  <div class="body">
+
+    <!-- ORDEN -->
+    <div class="section">
+      <div class="slabel"><i class="ti ti-clipboard-list" aria-hidden="true"></i>Orden de trabajo</div>
+      <div class="field">
+        <label>Selecciona la orden activa</label>
+        <div class="loading-row" id="loading-ot">
+          <div class="spinner"></div><span>Cargando desde base de datos...</span>
+        </div>
+        <select id="orden-sel" style="display:none" onchange="onOrdenChange()">
+          <option value="">— Selecciona una orden —</option>
+        </select>
+        <div class="orden-info" id="orden-info">
+          <strong id="info-desc">—</strong>
+          <span id="info-cliente">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPERARIO -->
+    <div class="section">
+      <div class="slabel"><i class="ti ti-user" aria-hidden="true"></i>Operario</div>
+      <div class="field">
+        <label>Nombre</label>
+        <input type="text" id="operario" placeholder="Tu nombre completo" oninput="onOperarioInput()">
+        <div class="nombre-guardado" id="nombre-guardado">
+          <i class="ti ti-device-floppy" style="font-size:11px"></i> Nombre guardado en este dispositivo
+        </div>
+      </div>
+    </div>
+
+    <!-- FECHA Y HORARIO -->
+    <div class="section">
+      <div class="slabel"><i class="ti ti-calendar" aria-hidden="true"></i>Fecha y horario</div>
+
+      <div class="field">
+        <label>Fecha del trabajo</label>
+        <input type="date" id="fecha" onchange="validarFecha()">
+        <div class="fecha-info" id="fecha-info"></div>
+        <div class="alert-box a-err" id="fecha-err">
+          <i class="ti ti-ban" aria-hidden="true"></i>
+          <span id="fecha-err-txt"></span>
+        </div>
+        <div class="alert-box a-warn" id="fecha-warn">
+          <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+          <span id="fecha-warn-txt"></span>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label>Entrada</label>
+          <button class="time-btn" id="btn-entrada" onclick="registrar('entrada')">
+            <i class="ti ti-clock" aria-hidden="true"></i>
+            <span class="time-val" id="entrada-val">Registrar</span>
+          </button>
+        </div>
+        <div class="field">
+          <label>Salida</label>
+          <button class="time-btn" id="btn-salida" onclick="registrar('salida')">
+            <i class="ti ti-clock-off" aria-hidden="true"></i>
+            <span class="time-val" id="salida-val">Registrar</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="alert-box a-err" id="alert-horas-err">
+        <i class="ti ti-ban" aria-hidden="true"></i>
+        <span id="alert-horas-err-txt"></span>
+      </div>
+      <div class="alert-box a-warn" id="alert-horas-warn">
+        <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+        <span id="alert-horas-warn-txt"></span>
+      </div>
+      <div class="alert-box a-err" id="alert-solape">
+        <i class="ti ti-ban" aria-hidden="true"></i>
+        <span id="alert-solape-txt"></span>
+      </div>
+
+      <div class="horas-chip" id="horas-chip">
+        <i class="ti ti-check" style="font-size:13px"></i>
+        <span id="horas-total-txt"></span>
+      </div>
+      <div id="gps-info" style="display:none">
+        <a class="map-link" id="gps-link" target="_blank">
+          <i class="ti ti-map-pin" aria-hidden="true"></i> Ver ubicación de entrada en mapa
+        </a>
+      </div>
+    </div>
+
+    <!-- TRABAJO -->
+    <div class="section">
+      <div class="slabel"><i class="ti ti-tool" aria-hidden="true"></i>Trabajo realizado</div>
+      <div class="field">
+        <label>Descripción</label>
+        <textarea id="descripcion" placeholder="Describe detalladamente las tareas realizadas..."></textarea>
+      </div>
+      <div class="field">
+        <label>Materiales utilizados</label>
+        <textarea id="materiales" placeholder="Piezas, repuestos, consumibles..." style="min-height:60px"></textarea>
+      </div>
+      <div class="field">
+        <label>Observaciones</label>
+        <textarea id="observaciones" placeholder="Incidencias, pendientes..." style="min-height:54px"></textarea>
+      </div>
+    </div>
+
+    <!-- FOTOS -->
+    <div class="section">
+      <div class="slabel"><i class="ti ti-camera" aria-hidden="true"></i>Fotos del trabajo</div>
+      <div class="photo-drop" onclick="document.getElementById('photo-input').click()">
+        <i class="ti ti-camera-plus" aria-hidden="true"></i>
+        <p>Toca para hacer fotos o elegir de la galería</p>
+      </div>
+      <input type="file" id="photo-input" accept="image/*" multiple capture="environment">
+      <div id="photo-preview"></div>
+    </div>
+
+    <!-- MENSAJES GLOBALES -->
+    <div class="alert-box a-err" id="toast-err" style="margin-bottom:12px">
+      <i class="ti ti-alert-circle" aria-hidden="true"></i>
+      <span id="toast-err-txt"></span>
+    </div>
+    <div class="alert-box a-ok" id="toast-ok" style="margin-bottom:12px">
+      <i class="ti ti-check" aria-hidden="true"></i>
+      <span id="toast-ok-txt"></span>
+    </div>
+
+  </div>
+
+  <div class="btn-group">
+    <button class="btn btn-wa" onclick="enviar('wa')">
+      <i class="ti ti-brand-whatsapp" aria-hidden="true"></i> WhatsApp
+    </button>
+    <button class="btn btn-mail" onclick="enviar('mail')">
+      <i class="ti ti-mail" aria-hidden="true"></i> Email
+    </button>
+  </div>
+
+</div>
+<script>
+const SHEET_ID='1NIG1or-IXOutdhlplnp7D4OxNW-cetgQbfA0EmQmNp8';
+const WHATSAPP='34679536015';
+const EMAIL='ingenieriatrazos@gmail.com';
+const MAX_WARN=8, MAX_BLOCK=12;
+
+// Festivos nacionales + Galicia 2024-2026
+const FESTIVOS=new Set([
+  '2024-01-01','2024-01-06','2024-03-28','2024-03-29','2024-04-01',
+  '2024-05-01','2024-07-25','2024-08-15','2024-10-12','2024-11-01',
+  '2024-12-06','2024-12-25',
+  '2025-01-01','2025-01-06','2025-04-17','2025-04-18',
+  '2025-05-01','2025-07-25','2025-08-15','2025-10-12','2025-11-01',
+  '2025-12-06','2025-12-08','2025-12-25',
+  '2026-01-01','2026-01-06','2026-04-02','2026-04-03',
+  '2026-05-01','2026-07-25','2026-08-15','2026-10-12','2026-11-01',
+  '2026-12-08','2026-12-25',
+]);
+
+const DIAS=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+
+let ordenesDB=[], horaEntrada=null, horaSalida=null;
+let gpsLat=null, gpsLon=null, gpsEntradaCoord=null;
+let deferredInstall=null, fechaBloqueada=false;
+
+function pad(n){return String(n).padStart(2,'0')}
+function ahora(){const d=new Date();return pad(d.getHours())+':'+pad(d.getMinutes())}
+function toMins(t){if(!t)return null;const[h,m]=t.split(':').map(Number);return h*60+m}
+function calcH(e,s){const em=toMins(e),sm=toMins(s);if(!em||!sm||sm<=em)return null;return(sm-em)/60}
+
+function showEl(id,show,display){
+  const el=document.getElementById(id);
+  if(el)el.style.display=show?(display||'flex'):'none';
+}
+function setText(id,t){const el=document.getElementById(id);if(el)el.textContent=t}
+
+// ── INSTALL BANNER ──────────────────────────────────────────
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();deferredInstall=e;showEl('install-banner',true,'flex');
+});
+function instalarPWA(){
+  if(deferredInstall){deferredInstall.prompt();deferredInstall.userChoice.then(()=>showEl('install-banner',false))}
+}
+
+// ── GOOGLE SHEETS ────────────────────────────────────────────
+async function cargarOrdenes(){
+  try{
+    const url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+    const r=await fetch(url);
+    const txt=await r.text();
+    const lines=txt.trim().split('\n').slice(1);
+    ordenesDB=lines.map(l=>{
+      const cols=[...l.matchAll(/"([^"]*)"|([^,]+)/g)].map(m=>(m[1]!==undefined?m[1]:m[2]).trim());
+      return{id:cols[0],cliente:cols[1],desc:cols[2],estado:cols[3]};
+    }).filter(o=>o.estado&&o.estado.toUpperCase()==='ABIERTA');
+    const sel=document.getElementById('orden-sel');
+    ordenesDB.forEach(o=>{
+      const opt=document.createElement('option');
+      opt.value=o.id;opt.textContent=`${o.id} — ${o.desc}`;
+      sel.appendChild(opt);
+    });
+    document.getElementById('loading-ot').style.display='none';
+    sel.style.display='block';
+  }catch(e){
+    document.getElementById('loading-ot').innerHTML=
+      '<span style="color:#A32D2D;font-size:12px">&#9888; Error al cargar órdenes. Comprueba conexión.</span>';
+  }
+}
+function onOrdenChange(){
+  const oid=document.getElementById('orden-sel').value;
+  const info=document.getElementById('orden-info');
+  if(!oid){info.style.display='none';return}
+  const o=ordenesDB.find(x=>x.id===oid);
+  if(o){setText('info-desc',o.desc);setText('info-cliente',o.cliente);info.style.display='block'}
+}
+
+// ── VALIDACIÓN DE FECHA ──────────────────────────────────────
+function validarFecha(){
+  const val=document.getElementById('fecha').value;
+  const input=document.getElementById('fecha');
+  showEl('fecha-err',false);showEl('fecha-warn',false);showEl('fecha-info',false);
+  input.className='';fechaBloqueada=false;
+
+  if(!val)return;
+
+  const selDate=new Date(val+'T00:00:00');
+  const hoy=new Date();hoy.setHours(0,0,0,0);
+  const diffDias=Math.round((selDate-hoy)/(1000*60*60*24));
+  const diaSemana=selDate.getDay();
+  const esDomingo=diaSemana===0;
+  const esFestivo=FESTIVOS.has(val);
+  const esSabado=diaSemana===6;
+  const nombreDia=DIAS[diaSemana];
+
+  // ERRORES BLOQUEANTES
+  if(diffDias>0){
+    setText('fecha-err-txt','No se puede registrar un parte para una fecha futura.');
+    showEl('fecha-err',true);input.className='input-err';fechaBloqueada=true;return;
+  }
+  if(diffDias<-2){
+    setText('fecha-err-txt',`Fecha demasiado antigua (${Math.abs(diffDias)} días atrás). Solo se permiten partes con hasta 2 días de retraso. Contacta con administración si necesitas justificarlo.`);
+    showEl('fecha-err',true);input.className='input-err';fechaBloqueada=true;return;
+  }
+  if(esDomingo){
+    setText('fecha-err-txt','No se puede registrar trabajo en domingo. Si hubo guardia o trabajo especial, contacta con administración.');
+    showEl('fecha-err',true);input.className='input-err';fechaBloqueada=true;return;
+  }
+  if(esFestivo){
+    setText('fecha-err-txt',`El ${val.split('-').reverse().join('/')} es festivo oficial (${nombreDia}). No se puede registrar un parte ordinario. Contacta con administración si fue trabajo en festivo.`);
+    showEl('fecha-err',true);input.className='input-err';fechaBloqueada=true;return;
+  }
+
+  // AVISOS NO BLOQUEANTES
+  if(esSabado){
+    setText('fecha-warn-txt',`Es sábado. ¿Seguro que trabajaste este día? Si es correcto, puedes continuar.`);
+    showEl('fecha-warn',true);input.className='input-warn';
+  } else if(diffDias<0){
+    const diasStr=Math.abs(diffDias)===1?'ayer':`hace ${Math.abs(diffDias)} días`;
+    setText('fecha-warn-txt',`Estás registrando un parte de ${diasStr} (${nombreDia} ${val.split('-').reverse().join('/')}). Asegúrate de que la fecha es correcta.`);
+    showEl('fecha-warn',true);input.className='input-warn';
+  } else {
+    // Hoy: todo OK
+    const fi=document.getElementById('fecha-info');
+    fi.textContent=`Hoy, ${nombreDia} ${val.split('-').reverse().join('/')}`;
+    fi.style.display='block';input.className='input-ok';
+  }
+}
+
+// ── GPS ──────────────────────────────────────────────────────
+function initGPS(){
+  if(!navigator.geolocation){
+    document.getElementById('geo-icon').className='ti ti-map-pin geo-err';
+    setText('geo-txt','GPS no disponible');return;
+  }
+  navigator.geolocation.watchPosition(pos=>{
+    gpsLat=pos.coords.latitude.toFixed(6);
+    gpsLon=pos.coords.longitude.toFixed(6);
+    document.getElementById('geo-icon').className='ti ti-map-pin geo-ok';
+    setText('geo-txt',`GPS activo · ${gpsLat}, ${gpsLon}`);
+  },()=>{
+    document.getElementById('geo-icon').className='ti ti-map-pin geo-err';
+    setText('geo-txt','Permiso GPS denegado — actívalo en ajustes del móvil');
+  },{enableHighAccuracy:true,maximumAge:15000});
+}
+
+// ── REGISTRO DE HORAS ────────────────────────────────────────
+function registrar(tipo){
+  if(fechaBloqueada){showErr('Corrige primero la fecha antes de registrar horas');return}
+  const h=ahora();
+  showEl('alert-horas-err',false);showEl('alert-horas-warn',false);showEl('alert-solape',false);
+
+  if(tipo==='entrada'){
+    horaEntrada=h;
+    gpsEntradaCoord=gpsLat?{lat:gpsLat,lon:gpsLon}:null;
+    setText('entrada-val',h);
+    document.getElementById('btn-entrada').classList.add('done');
+    document.querySelector('#btn-entrada i').className='ti ti-clock-check';
+    horaSalida=null;
+    setText('salida-val','Registrar');
+    document.getElementById('btn-salida').classList.remove('done');
+    document.querySelector('#btn-salida i').className='ti ti-clock-off';
+    showEl('horas-chip',false);
+    if(gpsEntradaCoord){
+      document.getElementById('gps-link').href=`https://maps.google.com/?q=${gpsEntradaCoord.lat},${gpsEntradaCoord.lon}`;
+      showEl('gps-info',true,'block');
+    }
+  } else {
+    if(!horaEntrada){showErr('Registra primero la hora de entrada');return}
+    const diff=calcH(horaEntrada,h);
+    if(!diff||diff<=0){showErr('La salida debe ser posterior a la entrada');return}
+    if(diff>MAX_BLOCK){
+      setText('alert-horas-err-txt',`Jornada de ${diff.toFixed(1)}h — supera el máximo permitido de ${MAX_BLOCK}h. Comprueba las horas.`);
+      showEl('alert-horas-err',true);return;
+    }
+    const solape=comprobarSolape(horaEntrada,h);
+    if(solape){
+      setText('alert-solape-txt',`Horario solapado con un parte anterior de hoy (${solape}). Corrige las horas.`);
+      showEl('alert-solape',true);return;
+    }
+    if(diff>MAX_WARN){
+      setText('alert-horas-warn-txt',`Jornada larga: ${diff.toFixed(1)}h (más de ${MAX_WARN}h). ¿Es correcto?`);
+      showEl('alert-horas-warn',true);
+    }
+    horaSalida=h;
+    setText('salida-val',h);
+    document.getElementById('btn-salida').classList.add('done');
+    document.querySelector('#btn-salida i').className='ti ti-clock-check';
+    setText('horas-total-txt',`${diff.toFixed(1)} h trabajadas`);
+    showEl('horas-chip',true,'flex');
+  }
+}
+
+function comprobarSolape(entrada,salida){
+  const fecha=document.getElementById('fecha').value;
+  const partes=JSON.parse(localStorage.getItem('ironor_'+fecha)||'[]');
+  const em=toMins(entrada),sm=toMins(salida);
+  for(const p of partes){
+    const pe=toMins(p.e),ps=toMins(p.s);
+    if(em<ps&&sm>pe)return`${p.e}–${p.s}`;
+  }
+  return null;
+}
+function guardarParteLocal(){
+  const fecha=document.getElementById('fecha').value;
+  const partes=JSON.parse(localStorage.getItem('ironor_'+fecha)||'[]');
+  partes.push({e:horaEntrada,s:horaSalida});
+  localStorage.setItem('ironor_'+fecha,JSON.stringify(partes));
+}
+
+// ── OPERARIO ─────────────────────────────────────────────────
+function onOperarioInput(){
+  localStorage.setItem('ironor_operario',document.getElementById('operario').value);
+}
+function cargarOperario(){
+  const saved=localStorage.getItem('ironor_operario');
+  if(saved){
+    document.getElementById('operario').value=saved;
+    showEl('nombre-guardado',true,'block');
+  }
+}
+
+// ── MENSAJES ─────────────────────────────────────────────────
+function showErr(msg){
+  setText('toast-err-txt',msg);showEl('toast-err',true);
+  setTimeout(()=>showEl('toast-err',false),4000);
+}
+function showOk(msg){
+  setText('toast-ok-txt',msg);showEl('toast-ok',true);
+  setTimeout(()=>showEl('toast-ok',false),3000);
+}
+
+// ── VALIDACIÓN GLOBAL ANTES DE ENVIAR ────────────────────────
+function validar(){
+  if(!document.getElementById('orden-sel').value){showErr('Selecciona una orden de trabajo');return false}
+  if(!document.getElementById('operario').value.trim()){showErr('Indica el nombre del operario');return false}
+  if(fechaBloqueada){showErr('La fecha seleccionada no es válida');return false}
+  if(!document.getElementById('fecha').value){showErr('Selecciona la fecha del trabajo');return false}
+  if(!horaEntrada){showErr('Registra la hora de entrada');return false}
+  if(!horaSalida){showErr('Registra la hora de salida');return false}
+  if(!document.getElementById('descripcion').value.trim()){showErr('Añade una descripción del trabajo realizado');return false}
+  return true;
+}
+
+// ── DATOS Y ENVÍO ─────────────────────────────────────────────
+function getDatos(){
+  const oid=document.getElementById('orden-sel').value;
+  const o=ordenesDB.find(x=>x.id===oid)||{};
+  const fv=document.getElementById('fecha').value;
+  const fecha=fv?fv.split('-').reverse().join('/'):'—';
+  const diff=calcH(horaEntrada,horaSalida);
+  return{
+    num:document.getElementById('parte-num').textContent,
+    orden:oid,cliente:o.cliente||'—',desc_orden:o.desc||'—',
+    operario:document.getElementById('operario').value||'—',
+    fecha,entrada:horaEntrada||'—',salida:horaSalida||'—',
+    horas:diff?diff.toFixed(1):'—',
+    descripcion:document.getElementById('descripcion').value||'—',
+    materiales:document.getElementById('materiales').value||'—',
+    observaciones:document.getElementById('observaciones').value||'—',
+    gps:gpsEntradaCoord?`${gpsEntradaCoord.lat},${gpsEntradaCoord.lon}`:null
+  };
+}
+function textoWA(d){
+  const loc=d.gps?`\n📍 https://maps.google.com/?q=${d.gps}`:'';
+  return `🔧 *PARTE DE TRABAJO — IRONOR METALURGIA*\n━━━━━━━━━━━━━━━━━━━━\n📋 *${d.num}* | OT: ${d.orden}\n🏢 *${d.cliente}*\n📝 ${d.desc_orden}\n👷 Operario: ${d.operario}\n📅 Fecha: ${d.fecha}${loc}\n\n⏱ *HORARIO*\n• Entrada: ${d.entrada}  •  Salida: ${d.salida}\n• Total: *${d.horas} h*\n\n🔩 *TRABAJO REALIZADO*\n${d.descripcion}\n\n📦 *MATERIALES*\n${d.materiales}\n\n📝 *OBSERVACIONES*\n${d.observaciones}\n━━━━━━━━━━━━━━━━━━━━\nironor.es  |  881 017 663`;
+}
+function textoEmail(d){
+  const loc=d.gps?`https://maps.google.com/?q=${d.gps}`:'No disponible';
+  const sep='─'.repeat(42);
+  return{
+    asunto:`Parte ${d.num} · OT ${d.orden} · ${d.operario} · ${d.fecha}`,
+    cuerpo:`PARTE DE TRABAJO — IRONOR METALURGIA\n${sep}\nNúm. parte:  ${d.num}\nOrden:       ${d.orden} — ${d.desc_orden}\nCliente:     ${d.cliente}\nOperario:    ${d.operario}\nFecha:       ${d.fecha}\n\nHORARIO\nEntrada:     ${d.entrada}\nSalida:      ${d.salida}\nTotal:       ${d.horas} h\nUbicación:   ${loc}\n\nTRABAJO REALIZADO\n${d.descripcion}\n\nMATERIALES UTILIZADOS\n${d.materiales}\n\nOBSERVACIONES\n${d.observaciones}\n\n${sep}\nIRONOR METALURGIA, S.L.\nPol. Industrial de Espiñeira, Par. 1 Fase II — Boiro, A Coruña\nTfno: 881 017 663 | ironor.es`
+  };
+}
+function enviar(tipo){
+  if(!validar())return;
+  const d=getDatos();
+  guardarParteLocal();
+  if(tipo==='wa'){
+    window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(textoWA(d))}`,'_blank');
+  } else {
+    const{asunto,cuerpo}=textoEmail(d);
+    window.location.href=`mailto:${EMAIL}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`;
+  }
+  showOk('Parte enviado correctamente');
+}
+
+// ── FOTOS ─────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('photo-input').addEventListener('change',function(){
+    const preview=document.getElementById('photo-preview');
+    Array.from(this.files).forEach(file=>{
+      const reader=new FileReader();
+      reader.onload=e=>{
+        const img=document.createElement('img');
+        img.src=e.target.result;img.className='thumb';
+        preview.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    });
+    showOk(this.files.length+' foto(s) añadida(s)');
+  });
+
+  // Fecha de hoy por defecto
+  const hoy=new Date();
+  document.getElementById('fecha').value=hoy.toISOString().split('T')[0];
+  validarFecha();
+
+  // Número de parte
+  setText('parte-num','PT-'+String(Math.floor(Math.random()*9000)+1000));
+
+  // Service Worker
+  if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+  cargarOrdenes();
+  cargarOperario();
+  initGPS();
+});
+
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();deferredInstall=e;showEl('install-banner',true,'flex');
+});
+</script>
+</body>
+</html>
